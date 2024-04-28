@@ -45,7 +45,7 @@ return [
 
 ```php
 $request->validate([
-    'g-recaptcha-response' => 'required|cloudflare_turnstile',
+    'cf-turnstile-response' => 'required|cloudflare_turnstile',
 ]);
 ```
 
