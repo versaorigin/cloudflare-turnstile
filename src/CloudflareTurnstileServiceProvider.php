@@ -23,6 +23,7 @@ class CloudflareTurnstileServiceProvider extends PackageServiceProvider
                     }
                 )
                     ->publishConfigFile()
+                    ->copyAndRegisterServiceProviderInApp()
                     ->askToStarRepoOnGitHub('versaorigin/cloudflare-turnstile')
                     ->endWith(function (InstallCommand $command) {
                         $command->info('Installation complete.');
@@ -38,9 +39,11 @@ class CloudflareTurnstileServiceProvider extends PackageServiceProvider
             return new CloudflareTurnstile($config);
         });
 
-        // $this->app->singleton(CloudflareTurnstileContract::class, function ($app) {
-        //     return $app->make(CloudflareTurnstileContract::class);
-        // });
+        $this->app->singleton(CloudflareTurnstile::class, function ($app) {
+            return $app->make(CloudflareTurnstileContract::class);
+        });
+
+        $this->app->alias(CloudflareTurnstileContract::class, 'cloudflare-turnstile');
     }
 
     public function packageBooted()
