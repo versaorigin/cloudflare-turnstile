@@ -3,6 +3,7 @@
 namespace VersaOrigin\CloudflareTurnstile;
 
 use Illuminate\Support\Facades\Validator;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use VersaOrigin\CloudflareTurnstile\Contracts\CloudflareTurnstileContract;
@@ -12,23 +13,34 @@ class CloudflareTurnstileServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
         $package
             ->name('cloudflare-turnstile')
-            ->hasConfigFile();
+            ->hasConfigFile()
+            ->hasInstallCommand(function (InstallCommand $command) {
+                $command->startWith(
+                    function (InstallCommand $command) {
+                        $command->info('Starting the installation process...');
+                    }
+                )
+                    ->publishConfigFile()
+                    ->askToStarRepoOnGitHub('versaorigin/cloudflare-turnstile')
+                    ->endWith(function (InstallCommand $command) {
+                        $command->info('Installation complete.');
+                    });
+            });
     }
 
     public function packageRegistered()
     {
-        $this->app->singleton(CloudflareTurnstileContract::class, function ($app) {
+        $this->app->bind(CloudflareTurnstileContract::class, function ($app) {
             $config = $app['config']['cloudflare-turnstile'] ?? [];
 
             return new CloudflareTurnstile($config);
         });
+
+        // $this->app->singleton(CloudflareTurnstileContract::class, function ($app) {
+        //     return $app->make(CloudflareTurnstileContract::class);
+        // });
     }
 
     public function packageBooted()

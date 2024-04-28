@@ -27,6 +27,12 @@ You can publish the config file with:
 php artisan vendor:publish --tag="cloudflare-turnstile-config"
 ```
 
+or, you can publish the config file with:
+
+```bash
+php artisan cloudflare-turnstile:install
+```
+
 This is the contents of the published config file:
 
 ```php
