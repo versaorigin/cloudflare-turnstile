@@ -178,10 +178,6 @@ class CloudflareTurnstile implements CloudflareTurnstileContract
                 'remoteip' => $ip,
             ]);
 
-        if (! $response) {
-            throw new CloudflareTurnstileException('The response is empty.');
-        }
-
         if ($response->failed()) {
             throw new CloudflareTurnstileException('Failed to validate the response.');
         }

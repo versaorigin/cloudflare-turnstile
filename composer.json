@@ -37,7 +37,8 @@
     },
     "autoload": {
         "psr-4": {
-            "VersaOrigin\\CloudflareTurnstile\\": "src/"
+            "VersaOrigin\\CloudflareTurnstile\\": "src/",
+            "VersaOrigin\\CloudflareTurnstile\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
@@ -48,6 +49,7 @@
     },
     "scripts": {
         "post-autoload-dump": "@composer run prepare",
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
         "prepare": "@php vendor/bin/testbench package:discover --ansi",
         "build": [
             "@composer run prepare",
@@ -61,7 +63,8 @@
         "analyse": "vendor/bin/phpstan analyse",
         "test": "vendor/bin/pest",
         "test-coverage": "vendor/bin/pest --coverage",
-        "format": "vendor/bin/pint"
+        "format": "vendor/bin/pint",
+        "act": "act --container-architecture linux/amd64"
     },
     "config": {
         "sort-packages": true,

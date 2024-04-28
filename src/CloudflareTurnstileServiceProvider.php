@@ -33,12 +33,19 @@ class CloudflareTurnstileServiceProvider extends PackageServiceProvider
 
     public function packageBooted()
     {
-        Validator::extend('cloudflare_turnstile', function ($attribute, $value, $parameters, $validator) {
+        Validator::extend('cloudflare_turnstile', function (
+            string $attribute,
+            mixed $value,
+            array $parameters,
+            $validator
+        ) {
             $rule = new CloudflareTurnstileRule();
 
-            $rule->validate($attribute, $value, function ($message) use ($attribute, $validator) {
-                $validator->errors()->add($attribute, $message);
-            });
+            $rule->validate(
+                $attribute,
+                $value,
+                fn (string $error) => $validator->errors()->add($attribute, $error)
+            );
 
             return ! $validator->errors()->has($attribute);
         });
