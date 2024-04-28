@@ -73,7 +73,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VersaOrigin\\CloudflareTurnstile\\Providers\\CloudflareTurnstileServiceProvider"
+                "VersaOrigin\\CloudflareTurnstile\\CloudflareTurnstileServiceProvider"
             ],
             "aliases": {
                 "CloudflareTurnstile": "VersaOrigin\\CloudflareTurnstile\\Facades\\CloudflareTurnstile"
