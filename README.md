@@ -7,6 +7,12 @@
 
 This package provides a validator for Laravel to validate Cloudflare Turnstile responses. It is useful when you want to validate a reCAPTCHA response from a form.
 
+## Requirements
+
+- PHP 8.3 or higher
+- Laravel 11.0 or higher
+- Cloudflare Turnstile API key and secret
+
 ## Installation
 
 You can install the package via composer:
