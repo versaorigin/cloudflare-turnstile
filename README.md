@@ -37,13 +37,14 @@ This is the contents of the published config file:
 
 ```php
 return [
+  "enabled" => env("CLOUDFLARE_TURNSTILE_ENABLED", true),
 
-    'enabled' => env('CLOUDFLARE_TURNSTILE_ENABLED', true),
+  "key" => env("CLOUDFLARE_TURNSTILE_KEY", "your-cloudflare-turnstile-key"),
 
-    'key' => env('CLOUDFLARE_TURNSTILE_KEY', 'your-cloudflare-turnstile-key'),
-
-    'secret' => env('CLOUDFLARE_TURNSTILE_SECRET', 'your-cloudflare-turnstile-secret'),
-
+  "secret" => env(
+    "CLOUDFLARE_TURNSTILE_SECRET",
+    "your-cloudflare-turnstile-secret"
+  ),
 ];
 ```
 
@@ -51,7 +52,7 @@ return [
 
 ```php
 $request->validate([
-    'cf-turnstile-response' => 'required|cloudflare_turnstile',
+  "cf-turnstile-response" => ["required", "string", "cloudflare_turnstile"],
 ]);
 ```
 
