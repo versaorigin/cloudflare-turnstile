@@ -54,7 +54,7 @@ class CloudflareTurnstileServiceProvider extends PackageServiceProvider
             array $parameters,
             $validator
         ) {
-            $rule = new CloudflareTurnstileRule();
+            $rule = new CloudflareTurnstileRule;
 
             $rule->validate(
                 $attribute,
