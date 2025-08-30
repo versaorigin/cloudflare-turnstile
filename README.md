@@ -37,24 +37,98 @@ This is the contents of the published config file:
 
 ```php
 return [
-  "enabled" => env("CLOUDFLARE_TURNSTILE_ENABLED", true),
+    'enabled' => env('CLOUDFLARE_TURNSTILE_ENABLED', true),
 
-  "key" => env("CLOUDFLARE_TURNSTILE_KEY", "your-cloudflare-turnstile-key"),
+    'key' => env('CLOUDFLARE_TURNSTILE_KEY', ''),
 
-  "secret" => env(
-    "CLOUDFLARE_TURNSTILE_SECRET",
-    "your-cloudflare-turnstile-secret"
-  ),
+    'secret' => env('CLOUDFLARE_TURNSTILE_SECRET', ''),
+
+    'timeout' => env('CLOUDFLARE_TURNSTILE_TIMEOUT', 30),
+
+    'connect_timeout' => env('CLOUDFLARE_TURNSTILE_CONNECT_TIMEOUT', 10),
+
+    'retry' => [
+        'times' => env('CLOUDFLARE_TURNSTILE_RETRY_TIMES', 3),
+        'sleep' => env('CLOUDFLARE_TURNSTILE_RETRY_SLEEP', 1000),
+    ],
+
+    'cache' => [
+        'enabled' => env('CLOUDFLARE_TURNSTILE_CACHE_ENABLED', true),
+        'ttl' => env('CLOUDFLARE_TURNSTILE_CACHE_TTL', 300),
+    ],
 ];
 ```
 
 ## Usage
 
+### Basic Validation
+
 ```php
 $request->validate([
-  "cf-turnstile-response" => ["required", "string", "cloudflare_turnstile"],
+    "cf-turnstile-response" => ["required", "string", "cloudflare_turnstile"],
 ]);
 ```
+
+### Using the Validation Rule Class
+
+```php
+use VersaOrigin\CloudflareTurnstile\Rules\CloudflareTurnstileRule;
+
+$request->validate([
+    "cf-turnstile-response" => ["required", "string", new CloudflareTurnstileRule],
+]);
+```
+
+### Blade Directive
+
+Add the Turnstile widget to your forms easily:
+
+```blade
+<form method="POST" action="/submit">
+    @csrf
+
+    <!-- Your form fields -->
+
+    @turnstile
+
+    <button type="submit">Submit</button>
+</form>
+```
+
+### Middleware Protection
+
+Protect entire routes with the Turnstile middleware:
+
+```php
+use VersaOrigin\CloudflareTurnstile\Middleware\CloudflareTurnstileMiddleware;
+
+Route::post('/api/protected', function () {
+    // Your protected logic
+})->middleware(CloudflareTurnstileMiddleware::class);
+```
+
+### Programmatic Validation
+
+```php
+use VersaOrigin\CloudflareTurnstile\Facades\CloudflareTurnstile;
+
+$token = $request->input('cf-turnstile-response');
+$ip = $request->ip();
+
+if (CloudflareTurnstile::validate($token, $ip)) {
+    // Valid response
+} else {
+    // Invalid response
+    $errorMessage = CloudflareTurnstile::getErrorMessage();
+}
+```
+
+### Configuration Options
+
+- **Retry Logic**: Automatically retries failed requests with configurable attempts and delays
+- **Caching**: Prevents token replay attacks by caching successful validations
+- **Logging**: Failed validations are logged for debugging
+- **Timeout Control**: Configure connection and request timeouts
 
 ## Testing
 

@@ -4,6 +4,7 @@ namespace VersaOrigin\CloudflareTurnstile;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Traits\Macroable;
 use VersaOrigin\CloudflareTurnstile\Contracts\CloudflareTurnstileContract;
 use VersaOrigin\CloudflareTurnstile\Exceptions\CloudflareTurnstileException;
@@ -12,7 +13,7 @@ class CloudflareTurnstile implements CloudflareTurnstileContract
 {
     use Macroable;
 
-    private array $errorCodes = [
+    private const array ERROR_CODES = [
         'unknown' => 'An unknown error happened while validating the response.',
         'disabled' => 'The captcha feature is disabled for this site.',
         'missing-input-secret' => 'The secret parameter was not passed.',
@@ -26,6 +27,10 @@ class CloudflareTurnstile implements CloudflareTurnstileContract
         'internal-error' => 'An internal error happened while validating the response. The request can be retried.',
     ];
 
+    private const string DEFAULT_URI = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+
+    private array $errorCodes = self::ERROR_CODES;
+
     private Collection $errors;
 
     private bool $enabled;
@@ -34,7 +39,7 @@ class CloudflareTurnstile implements CloudflareTurnstileContract
 
     private string $secret;
 
-    private string $uri = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+    private string $uri = self::DEFAULT_URI;
 
     public function __construct(protected array $config)
     {
@@ -171,7 +176,20 @@ class CloudflareTurnstile implements CloudflareTurnstileContract
             return true;
         }
 
-        $response = Http::asJson()->timeout(30)->connectTimeout(10)
+        $maxRetries = $this->config['retry']['times'] ?? 3;
+        $retryDelay = $this->config['retry']['sleep'] ?? 1000; // milliseconds
+        $timeout = $this->config['timeout'] ?? 30;
+        $connectTimeout = $this->config['connect_timeout'] ?? 10;
+
+        $response = Http::asJson()
+            ->timeout($timeout)
+            ->connectTimeout($connectTimeout)
+            ->retry($maxRetries, $retryDelay, function ($exception, $request) {
+                // Retry on connection errors or 5xx server errors
+                return $exception instanceof \Illuminate\Http\Client\ConnectionException
+                    || ($exception instanceof \Illuminate\Http\Client\RequestException
+                        && $exception->response->serverError());
+            })
             ->post($this->getUri(), [
                 'secret' => $this->getSecret(),
                 'response' => $token,
@@ -179,6 +197,10 @@ class CloudflareTurnstile implements CloudflareTurnstileContract
             ]);
 
         if ($response->failed()) {
+            Log::error('Cloudflare Turnstile validation failed', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
             throw new CloudflareTurnstileException('Failed to validate the response.');
         }
 

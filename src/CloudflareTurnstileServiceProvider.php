@@ -2,6 +2,7 @@
 
 namespace VersaOrigin\CloudflareTurnstile;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Validator;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
@@ -63,6 +64,16 @@ class CloudflareTurnstileServiceProvider extends PackageServiceProvider
             );
 
             return ! $validator->errors()->has($attribute);
+        });
+
+        // Add Blade directive for easy integration
+        Blade::directive('turnstile', function ($expression) {
+            $siteKey = config('cloudflare-turnstile.key');
+
+            return <<<HTML
+                <div class="cf-turnstile" data-sitekey="{$siteKey}" <?= $expression ?>></div>
+                <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+            HTML;
         });
     }
 }
