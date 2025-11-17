@@ -65,7 +65,7 @@ return [
 
 ```php
 $request->validate([
-    "cf-turnstile-response" => ["required", "string", "cloudflare_turnstile"],
+    "cf-turnstile-response" => ["required", "string", "turnstile"],
 ]);
 ```
 
