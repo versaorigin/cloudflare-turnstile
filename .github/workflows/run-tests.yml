@@ -7,6 +7,8 @@ on:
       - "phpunit.xml.dist"
       - "composer.json"
       - "composer.lock"
+permissions:
+  contents: read
 jobs:
   test:
     runs-on: ${{ matrix.os }}
