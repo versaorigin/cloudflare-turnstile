@@ -20,7 +20,7 @@ jobs:
           php-version: "8.3"
           coverage: none
       - name: Install composer dependencies
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
       - name: Create database folder
         run: mkdir -p database
       - name: Run PHPStan
