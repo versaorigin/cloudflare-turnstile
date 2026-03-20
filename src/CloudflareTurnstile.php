@@ -2,6 +2,8 @@
 
 namespace VersaOrigin\CloudflareTurnstile;
 
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -186,8 +188,8 @@ class CloudflareTurnstile implements CloudflareTurnstileContract
             ->connectTimeout($connectTimeout)
             ->retry($maxRetries, $retryDelay, function ($exception, $request) {
                 // Retry on connection errors or 5xx server errors
-                return $exception instanceof \Illuminate\Http\Client\ConnectionException
-                    || ($exception instanceof \Illuminate\Http\Client\RequestException
+                return $exception instanceof ConnectionException
+                    || ($exception instanceof RequestException
                         && $exception->response->serverError());
             })
             ->post($this->getUri(), [
