@@ -21,9 +21,6 @@ jobs:
         laravel: [13.*]
         testbench: [11.*]
         stability: [prefer-lowest, prefer-stable]
-        include:
-          - laravel: 13.*
-            testbench: 11.*
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
     steps:
       - name: Checkout code
