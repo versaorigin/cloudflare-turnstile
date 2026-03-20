@@ -19,13 +19,13 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         php: [8.2, 8.3, 8.4]
         laravel: [11.*, 12.*, 13.*]
-        testbench: [10.*, 11.*]
+        testbench: [9.*, 10.*, 11.*]
         carbon: [^2.0, ^3.0, ^4.0]
         stability: [prefer-lowest, prefer-stable]
         include:
-          - laravel: 13.*
-            testbench: 11.*
-            carbon: ^4.0
+          - laravel: 11.*
+            testbench: 9.*
+            carbon: ^2.0
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
     steps:
       - name: Checkout code
