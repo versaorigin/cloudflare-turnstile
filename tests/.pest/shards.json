@@ -1,0 +1,9 @@
+{
+    "timings": {
+        "Tests\\ArchTest": 0.1,
+        "Tests\\CloudflareTurnstileRuleTest": 0.1503,
+        "Tests\\CloudflareTurnstileTest": 0.1539
+    },
+    "checksum": "21ea3d3d8b34317cca31f70052212e6a",
+    "updated_at": "2026-04-21T03:56:04+00:00"
+}
