@@ -21,7 +21,6 @@ jobs:
           coverage: none
       - name: Install composer dependencies
         uses: ramsey/composer-install@v3
-        run: composer install --no-progress --no-suggest --prefer-dist
       - name: Create database folder
         run: mkdir -p database
       - name: Run PHPStan
