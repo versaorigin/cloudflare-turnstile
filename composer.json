@@ -40,8 +40,7 @@
     },
     "autoload": {
         "psr-4": {
-            "VersaOrigin\\CloudflareTurnstile\\": "src/",
-            "VersaOrigin\\CloudflareTurnstile\\Database\\Factories\\": "database/factories/"
+            "VersaOrigin\\CloudflareTurnstile\\": "src/"
         }
     },
     "autoload-dev": {

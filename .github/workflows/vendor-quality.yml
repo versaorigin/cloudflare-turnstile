@@ -1,0 +1,51 @@
+name: Vendor Quality
+
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    branches:
+      - main
+      - staging
+  workflow_dispatch:
+
+jobs:
+  composer-validate:
+    name: Validate composer.json
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - name: Composer validate
+        run: composer validate --strict
+
+  check-namespaces:
+    name: Check namespaces
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - name: Composer install
+        uses: ramsey/composer-install@v3
+
+      - name: Check namespaces
+        run: composer dump-autoload --optimize --strict-psr
